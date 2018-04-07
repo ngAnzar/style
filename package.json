@@ -1,0 +1,27 @@
+{
+  "name": "@anzar/style",
+  "version": "1.0.0",
+  "description": "",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "ts-mocha test/**/*.test.ts",
+    "build": "tsc"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "css": "^2.2.1",
+    "css-selector-tokenizer": "^0.7.0",
+    "is-plain-object": "^2.0.4"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.0.4",
+    "@types/mocha": "^2.2.43",
+    "@types/node": "^8.0.30",
+    "chai": "^4.1.2",
+    "mocha": "^3.5.3",
+    "ts-mocha": "^1.0.3",
+    "ts-node": "^3.3.0",
+    "typescript": "^2.5.2"
+  }
+}
