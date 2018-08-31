@@ -1,3 +1,3 @@
 export { newStyle } from "./style"
-export { Loader } from "./loader"
+export { Loader, CssLoader } from "./loader"
 export { Registry } from "./registry"

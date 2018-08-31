@@ -1,28 +1,53 @@
-export interface Entry {
-    selectors: {
-        [key: string]: number;
-    };
-    baseSelector: {
-        [key: string]: string;
-    };
+import { RuleSet, Dict, RuleSetGroupId, Selector, Loader } from "./loader";
+export interface RenderedCss {
+    group?: RuleSetGroupId;
+    name: string;
+    content: string;
 }
-export interface Entries {
-    [key: string]: Entry;
+export interface RenderOptions {
+    splitByMedia?: boolean;
 }
+export declare class RegisteredProperty {
+    mangledName: string;
+    ruleName: string;
+    ruleValue: string;
+    isImportant: boolean;
+    selectors: Selector[];
+    groups: RuleSetGroupId[];
+    index: number;
+    constructor(mangledName: string, ruleName: string, ruleValue: string, isImportant: boolean, selectors: Selector[], groups: RuleSetGroupId[], index: number);
+    append(group: RuleSetGroupId, selector: Selector, index: number, isImportant: boolean): void;
+}
+/**
+ * "width:20px": {
+ *      name: "new-class-name",
+ *      groups: []
+ * }
+ */
+export declare type EntriesByProperty = Dict<RegisteredProperty>;
+export declare type CanMangleCallback = (selector: Selector) => boolean;
 export declare class Registry {
-    normalEntries: Entries;
-    mediaEntries: {
-        [key: string]: Entries;
-    };
+    readonly name: string;
+    readonly depends: Registry[];
+    protected entries: EntriesByProperty;
     private uidCounter;
     private uidOffset;
     private uidMaxAlpha;
     private uidPower;
-    append(key: string, value: string, selector: string | null, media: string | null, namespace?: string): string;
-    remove(key: string, value: string, selector: string | null, media: string | null, namespace?: string): boolean;
-    nextId(): string;
-    toStyleSheet(format?: boolean): string;
-    private _appendRule(entries, selector, rule, namespace?);
-    private _removeRule(entries, selector, rule, namespace?);
-    private _entrySelectors(entry, selector, namespace?, create?);
+    private _canMangleName;
+    constructor(name: string);
+    addDependency(dep: Registry): void;
+    getAllDeps(): Registry[];
+    canMangleName: CanMangleCallback;
+    private _root;
+    readonly root: Registry | null;
+    register(ruleset: RuleSet): RegisteredProperty[];
+    getClassNames(props: RegisteredProperty[], request: string): string[];
+    protected findProperty(property: string): RegisteredProperty | null;
+    registerUnhandled(loader: Loader): void;
+    nextId(): any;
+    renderCss(options?: RenderOptions): RenderedCss[];
+    protected _renderByGroup(options: RenderOptions): RenderedCss[];
+    protected _renderFlat(options: RenderOptions): RenderedCss[];
+    protected _renderProperty(options: RenderOptions, prop: RegisteredProperty): string;
 }
