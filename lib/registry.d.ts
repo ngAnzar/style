@@ -50,4 +50,8 @@ export declare class Registry {
     protected _renderByGroup(options: RenderOptions): RenderedCss[];
     protected _renderFlat(options: RenderOptions): RenderedCss[];
     protected _renderProperty(options: RenderOptions, prop: RegisteredProperty): string;
+    protected _expandProperty(options: RenderOptions, prop: RegisteredProperty): IterableIterator<{
+        selectors: string[];
+        property: RegisteredProperty;
+    }>;
 }

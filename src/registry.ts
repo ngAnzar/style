@@ -56,6 +56,8 @@ export type CanMangleCallback = (selector: Selector) => boolean
 
 
 export class Registry {
+    // static readonly CANT_GROUP_SELECTOR = /:[^:]*placeholder\b/ig
+
     public readonly depends: Registry[] = []
     protected entries: EntriesByProperty = {}
 
@@ -259,26 +261,70 @@ export class Registry {
     }
 
     protected _renderProperty(options: RenderOptions, prop: RegisteredProperty): string {
-        let selectors: string[] = []
+        let result = ""
+
+        for (let v of this._expandProperty(options, prop)) {
+            result += `${v.selectors.join(",")}{${prop.ruleName}:${prop.ruleValue}}`
+        }
+
+        return result
+
+        // let selectors: string[] = []
+
+        // for (let sel of prop.selectors) {
+        //     if (!this._canMangleName || this._canMangleName(sel)) {
+        //         selectors.push(selectorTokenizer.stringify({
+        //             type: "selectors",
+        //             nodes: [{
+        //                 type: "selector",
+        //                 nodes: [{ type: "class", name: prop.mangledName }].concat(sel.nodes.slice(1) as any)
+        //             }]
+        //         }))
+        //     } else {
+        //         selectors.push(selectorTokenizer.stringify({
+        //             type: "selectors",
+        //             nodes: [sel]
+        //         }))
+        //     }
+        // }
+
+        // selectors = selectors.filter((value, index, self) => self.indexOf(value) === index)
+        // return `${selectors.join(",")}{${prop.ruleName}:${prop.ruleValue}}`
+    }
+
+    protected *_expandProperty(options: RenderOptions, prop: RegisteredProperty): IterableIterator<{ selectors: string[], property: RegisteredProperty }> {
+        let multi: string[] = []
 
         for (let sel of prop.selectors) {
+            let selector = ""
+
             if (!this._canMangleName || this._canMangleName(sel)) {
-                selectors.push(selectorTokenizer.stringify({
+                selector = selectorTokenizer.stringify({
                     type: "selectors",
                     nodes: [{
                         type: "selector",
                         nodes: [{ type: "class", name: prop.mangledName }].concat(sel.nodes.slice(1) as any)
                     }]
-                }))
+                })
             } else {
-                selectors.push(selectorTokenizer.stringify({
+                selector = selectorTokenizer.stringify({
                     type: "selectors",
                     nodes: [sel]
-                }))
+                })
+            }
+
+            if (/:[^:]*placeholder\b/ig.test(selector)) {
+                yield { selectors: [selector], property: prop }
+            } else if (selector.length > 0) {
+                multi.push(selector)
             }
         }
 
-        selectors = selectors.filter((value, index, self) => self.indexOf(value) === index)
-        return `${selectors.join(",")}{${prop.ruleName}:${prop.ruleValue}}`
+        if (multi.length) {
+            yield {
+                selectors: multi.filter((value, index, self) => self.indexOf(value) === index),
+                property: prop
+            }
+        }
     }
 }
