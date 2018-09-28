@@ -143,20 +143,21 @@ export class Registry {
         let res: string[] = []
 
         for (let prop of props) {
-            let original: string | null = null
+            let unmangled: string | null = null
 
             for (let sel of prop.selectors) {
                 if (this._canMangleName && !this._canMangleName(sel)) {
                     let primary = sel.nodes[0]
-                    if (primary.type === "class") {
-                        original = primary.name
+                    if (primary.type === "class" && primary.name === request) {
+                        unmangled = primary.name
+                        break
                     }
                 }
             }
 
-            if (original && original === request) {
-                if (res.indexOf(original) === -1) {
-                    res.push(original)
+            if (unmangled) {
+                if (res.indexOf(unmangled) === -1) {
+                    res.push(unmangled)
                 }
             } else {
                 if (!prop.mangledName) {

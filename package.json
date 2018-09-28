@@ -7,7 +7,10 @@
     "test": "ts-mocha test/**/*.test.ts",
     "build": "tsc"
   },
-  "author": "",
+  "author": {
+    "email": "vetesi.zoltan@gmail.com",
+    "name": "Vetési Zoltán"
+  },
   "license": "ISC",
   "dependencies": {
     "clean-css": "^4.2.1",

@@ -87,6 +87,7 @@ describe("Test newStyle funcionality", () => {
         expect(style("hello")).to.eql("hello")
         expect(style("loader almafa")).to.eql("a b c")
         expect(style("toki")).to.eql("b")
+        expect(style("hello")).to.eql("hello")
 
         expect(registry.renderCss()[0].content).to.eql(`.hello,.b{width:10px}.hello{height:20px}.hello div{font-size:12px}.a{z-index:20}.c test{width:50px}`)
     })
