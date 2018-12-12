@@ -43,6 +43,14 @@ export class RegisteredProperty {
             this.groups.push(group)
         }
     }
+
+    public renderValue(): string {
+        if (this.isImportant) {
+            return `${this.ruleValue} !important`
+        } else {
+            return this.ruleValue
+        }
+    }
 }
 
 /**
@@ -265,7 +273,7 @@ export class Registry {
         let result = ""
 
         for (let v of this._expandProperty(options, prop)) {
-            result += `${v.selectors.join(",")}{${prop.ruleName}:${prop.ruleValue}}`
+            result += `${v.selectors.join(",")}{${prop.ruleName}:${prop.renderValue()}}`
         }
 
         return result
@@ -314,7 +322,7 @@ export class Registry {
                 })
             }
 
-            if (/:[^:]*placeholder\b/ig.test(selector)) {
+            if (/::?-+(moz|ms|webkit)-\b/ig.test(selector)) {
                 yield { selectors: [selector], property: prop }
             } else if (selector.length > 0) {
                 multi.push(selector)

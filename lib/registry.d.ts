@@ -17,6 +17,7 @@ export declare class RegisteredProperty {
     index: number;
     constructor(mangledName: string, ruleName: string, ruleValue: string, isImportant: boolean, selectors: Selector[], groups: RuleSetGroupId[], index: number);
     append(group: RuleSetGroupId, selector: Selector, index: number, isImportant: boolean): void;
+    renderValue(): string;
 }
 /**
  * "width:20px": {
