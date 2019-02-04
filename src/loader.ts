@@ -97,7 +97,7 @@ export interface UnhandledRuleSet {
 }
 
 export interface RuleSetGroupId {
-    kind: "none" | "media" | "document"
+    kind: "none" | "media" | "document" | "font"
     id: string
     rule?: StyleSheetRule
 }
@@ -207,6 +207,30 @@ export abstract class Loader {
                 id: `media[${this.removeWS(rule.media)}]`,
                 rule: rule
             }
+        } else if (rule.type === "font-face") {
+            let id1 = "", id2 = "", id3 = ""
+            for (const d of rule.declarations) {
+                switch (d.property) {
+                    case "font-family":
+                        id1 += d.value
+                        break
+
+                    case "font-style":
+                        id2 += d.value
+                        break
+
+                    case "font-weight":
+                        id3 += d.value
+                        break
+                }
+            }
+
+
+            return {
+                kind: "font",
+                id: `font[${id1}/${id2}/${id3}]`,
+                rule: rule
+            }
         }
         throw new Error(`Not supported rule type: ${rule.type}`)
     }
@@ -277,7 +301,17 @@ export class CssLoader extends Loader {
                 //     break
 
                 default:
-                    throw new Error("Unhandled rule type: " + rule.type)
+                    let fontGroup = this.makeGroupId(rule)
+                    if (!this.unhandable["@font-face"]) {
+                        this.unhandable["@font-face"] = {}
+                    }
+                    if (!this.unhandable["@font-face"][fontGroup.id]) {
+                        this.unhandable["@font-face"][fontGroup.id] = {
+                            groupBy: fontGroup,
+                            entries: []
+                        }
+                    }
+                    this.unhandable["@font-face"][fontGroup.id].entries.push(rule as any)
                     break
             }
         }

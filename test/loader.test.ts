@@ -69,5 +69,23 @@ describe("Test loader funcionality", () => {
             expect(loader.unhandable["div"][mediaGroupId].entries.length).to.eql(1)
             expect(loader.unhandable["div"][mediaGroupId].entries[0].selector.nodes[0].name).to.eql("div")
         })
+
+        it("Load @font-face", () => {
+            let loader: any = new CssLoader()
+            let fontGroupId = "font[FontFamilyName/normal/300]"
+            loader.load(`
+                @font-face {
+                    font-family: FontFamilyName;
+                    font-weight: 300;
+                    font-style: normal;
+                    src: local(Arial);
+                }
+            `)
+
+            expect(loader.unhandable).to.haveOwnProperty("@font-face")
+            expect(loader.unhandable["@font-face"]).to.haveOwnProperty(fontGroupId)
+            expect(loader.unhandable["@font-face"][fontGroupId].entries.length).to.eql(1)
+            expect(loader.unhandable["@font-face"][fontGroupId].entries[0].type).to.eql("font-face")
+        })
     })
 })

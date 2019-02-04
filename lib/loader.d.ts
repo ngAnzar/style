@@ -139,7 +139,7 @@ export interface UnhandledRuleSet {
     rules: Array<RuleSetEntry | StyleSheetRule>;
 }
 export interface RuleSetGroupId {
-    kind: "none" | "media" | "document";
+    kind: "none" | "media" | "document" | "font";
     id: string;
     rule?: StyleSheetRule;
 }

@@ -1,6 +1,6 @@
 import * as selectorTokenizer from "css-selector-tokenizer"
 
-import { RuleSet, Dict, RuleSetGroupId, Selector, CssRuleValue, Loader } from "./loader"
+import { RuleSet, Dict, RuleSetGroupId, Selector, CssRuleValue, Loader, StyleSheetRule } from "./loader"
 
 
 export interface RenderedCss {
@@ -68,6 +68,7 @@ export class Registry {
 
     public readonly depends: Registry[] = []
     protected entries: EntriesByProperty = {}
+    private fontFaces: { [key: string]: StyleSheetRule[] } = {}
 
     private uidCounter: number = 0
     private uidOffset: number = 10
@@ -120,26 +121,30 @@ export class Registry {
     public register(ruleset: RuleSet): RegisteredProperty[] {
         let res: RegisteredProperty[] = []
 
-        for (let entry of ruleset.entries) {
-            for (let ruleName in entry.rules) {
-                let ruleValue = entry.rules[ruleName]
-                let rule = `${ruleName}:${ruleValue}`
-                let registered = this.findProperty(rule)
+        if (ruleset.groupBy.kind === "font") {
+            this.fontFaces[ruleset.groupBy.id] = ruleset.entries as any
+        } else {
+            for (let entry of ruleset.entries) {
+                for (let ruleName in entry.rules) {
+                    let ruleValue = entry.rules[ruleName]
+                    let rule = `${ruleName}:${ruleValue}`
+                    let registered = this.findProperty(rule)
 
-                if (registered) {
-                    registered.append(ruleset.groupBy, entry.selector, entry.index, ruleValue.important || false)
-                    res.push(registered)
-                } else {
-                    this.entries[rule] = registered = new RegisteredProperty(
-                        "",
-                        ruleName,
-                        ruleValue.toString(),
-                        ruleValue.important || false,
-                        [entry.selector],
-                        [ruleset.groupBy],
-                        entry.index
-                    )
-                    res.push(registered)
+                    if (registered) {
+                        registered.append(ruleset.groupBy, entry.selector, entry.index, ruleValue.important || false)
+                        res.push(registered)
+                    } else {
+                        this.entries[rule] = registered = new RegisteredProperty(
+                            "",
+                            ruleName,
+                            ruleValue.toString(),
+                            ruleValue.important || false,
+                            [entry.selector],
+                            [ruleset.groupBy],
+                            entry.index
+                        )
+                        res.push(registered)
+                    }
                 }
             }
         }
@@ -241,6 +246,24 @@ export class Registry {
             }
         }
 
+        const fonts = Object.values(this.fontFaces)
+        if (fonts.length) {
+            if (!byGroup["@global"]) {
+                byGroup["@global"] = {
+                    group: {
+                        kind: "none",
+                        id: "@global"
+                    },
+                    name: this.name,
+                    content: ""
+                }
+            }
+
+            for (const font of fonts) {
+                byGroup["@global"].content = this._renderFontFace(font) + byGroup["@global"].content
+            }
+        }
+
         return Object.values(byGroup)
     }
 
@@ -299,6 +322,22 @@ export class Registry {
 
         // selectors = selectors.filter((value, index, self) => self.indexOf(value) === index)
         // return `${selectors.join(",")}{${prop.ruleName}:${prop.ruleValue}}`
+    }
+
+    protected _renderFontFace(faces: StyleSheetRule[]) {
+        let res = ""
+
+        for (const face of faces) {
+            if (face.type === "font-face") {
+                res += "@font-face{"
+                for (const d of face.declarations) {
+                    res += d.property + ":" + d.value + ";"
+                }
+                res += "}"
+            }
+        }
+
+        return res
     }
 
     protected *_expandProperty(options: RenderOptions, prop: RegisteredProperty): IterableIterator<{ selectors: string[], property: RegisteredProperty }> {

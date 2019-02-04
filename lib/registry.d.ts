@@ -1,4 +1,4 @@
-import { RuleSet, Dict, RuleSetGroupId, Selector, Loader } from "./loader";
+import { RuleSet, Dict, RuleSetGroupId, Selector, Loader, StyleSheetRule } from "./loader";
 export interface RenderedCss {
     group?: RuleSetGroupId;
     name: string;
@@ -31,6 +31,7 @@ export declare class Registry {
     readonly name: string;
     readonly depends: Registry[];
     protected entries: EntriesByProperty;
+    private fontFaces;
     private uidCounter;
     private uidOffset;
     private uidMaxAlpha;
@@ -51,6 +52,7 @@ export declare class Registry {
     protected _renderByGroup(options: RenderOptions): RenderedCss[];
     protected _renderFlat(options: RenderOptions): RenderedCss[];
     protected _renderProperty(options: RenderOptions, prop: RegisteredProperty): string;
+    protected _renderFontFace(faces: StyleSheetRule[]): string;
     protected _expandProperty(options: RenderOptions, prop: RegisteredProperty): IterableIterator<{
         selectors: string[];
         property: RegisteredProperty;
