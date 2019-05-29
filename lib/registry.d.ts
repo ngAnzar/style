@@ -44,6 +44,7 @@ export declare class Registry {
     private _root;
     readonly root: Registry | null;
     register(ruleset: RuleSet): RegisteredProperty[];
+    protected isSimlePrimarySelector(selector: Selector): boolean;
     getClassNames(props: RegisteredProperty[], request: string): string[];
     protected findProperty(property: string): RegisteredProperty | null;
     registerUnhandled(loader: Loader): void;

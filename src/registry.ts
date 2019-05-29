@@ -1,6 +1,6 @@
 import * as selectorTokenizer from "css-selector-tokenizer"
 
-import { RuleSet, Dict, RuleSetGroupId, Selector, CssRuleValue, Loader, StyleSheetRule } from "./loader"
+import { RuleSet, Dict, RuleSetGroupId, Selector, CssRuleValue, Loader, StyleSheetRule, SelectorPart } from "./loader"
 
 
 export interface RenderedCss {
@@ -126,7 +126,12 @@ export class Registry {
             for (let entry of ruleset.entries) {
                 for (let ruleName in entry.rules) {
                     let ruleValue = entry.rules[ruleName]
-                    let rule = `${ruleName}:${ruleValue}`
+                    let rule = `${ruleName}:${ruleValue}${ruleValue.important ? ' !important' : ''}`
+
+                    if (!this.isSimlePrimarySelector(entry.selector)) {
+                        rule = `[${rule}]`
+                    }
+
                     let registered = this.findProperty(rule)
 
                     if (registered) {
@@ -149,6 +154,21 @@ export class Registry {
         }
 
         return res
+    }
+
+    protected isSimlePrimarySelector(selector: Selector) {
+        let spaceIndex = -1
+        let part: SelectorPart
+
+        for (let i = 0, l = selector.nodes.length; i < l; i++) {
+            part = selector.nodes[i]
+            if (part.type === "spacing") {
+                spaceIndex = i
+                break
+            }
+        }
+
+        return spaceIndex === 1 || selector.nodes.length === 1
     }
 
     public getClassNames(props: RegisteredProperty[], request: string): string[] {

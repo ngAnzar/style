@@ -40,4 +40,18 @@ describe("Test css rendering", () => {
         expect(rendered.content).to.eql(`@font-face{font-family:FontFamilyName;font-weight:300;font-style:normal;src:local(Arial);}`)
 
     })
+
+    it("Attribute selector", () => {
+        let loader: any = new CssLoader()
+        loader.load(`
+            .button { width: 10px; height: 10px; }
+            .button[variant~="large"] { width: 10px; height: 20px; }
+        `)
+
+        let registry = new Registry("global")
+        let style = newStyle(registry, loader)
+
+        expect(style("button")).to.eql("a b c d")
+        expect(registry.renderCss()[0].content).to.eql(`.a{width:10px}.b{height:10px}.c[variant~=large]{width:10px}.d[variant~=large]{height:20px}`)
+    })
 })
