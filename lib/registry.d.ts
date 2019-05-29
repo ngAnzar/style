@@ -29,6 +29,7 @@ export declare type EntriesByProperty = Dict<RegisteredProperty>;
 export declare type CanMangleCallback = (selector: Selector) => boolean;
 export declare class Registry {
     readonly name: string;
+    protected _canMangleName: CanMangleCallback | null;
     readonly depends: Registry[];
     protected entries: EntriesByProperty;
     private fontFaces;
@@ -36,8 +37,7 @@ export declare class Registry {
     private uidOffset;
     private uidMaxAlpha;
     private uidPower;
-    private _canMangleName;
-    constructor(name: string);
+    constructor(name: string, _canMangleName?: CanMangleCallback | null);
     addDependency(dep: Registry): void;
     getAllDeps(): Registry[];
     canMangleName: CanMangleCallback;

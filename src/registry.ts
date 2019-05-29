@@ -75,10 +75,9 @@ export class Registry {
     private uidMaxAlpha: number = 35
     private uidPower: number = 1
 
-    private _canMangleName: CanMangleCallback
     // protected common:
 
-    public constructor(public readonly name: string) {
+    public constructor(public readonly name: string, protected _canMangleName: CanMangleCallback | null = null) {
 
     }
 
@@ -163,23 +162,19 @@ export class Registry {
                     let primary = sel.nodes[0]
                     if (primary.type === "class" && primary.name === request) {
                         unmangled = primary.name
-                        break
+                        if (res.indexOf(unmangled) === -1) {
+                            res.push(unmangled)
+                        }
                     }
                 }
             }
 
-            if (unmangled) {
-                if (res.indexOf(unmangled) === -1) {
-                    res.push(unmangled)
-                }
-            } else {
-                if (!prop.mangledName) {
-                    prop.mangledName = this.nextId()
-                }
+            if (!prop.mangledName) {
+                prop.mangledName = this.nextId()
+            }
 
-                if (res.indexOf(prop.mangledName) === -1) {
-                    res.push(prop.mangledName)
-                }
+            if (res.indexOf(prop.mangledName) === -1) {
+                res.push(prop.mangledName)
             }
         }
 
@@ -344,22 +339,13 @@ export class Registry {
         let multi: string[] = []
 
         for (let sel of prop.selectors) {
-            let selector = ""
-
-            if (!this._canMangleName || this._canMangleName(sel)) {
-                selector = selectorTokenizer.stringify({
-                    type: "selectors",
-                    nodes: [{
-                        type: "selector",
-                        nodes: [{ type: "class", name: prop.mangledName }].concat(sel.nodes.slice(1) as any)
-                    }]
-                })
-            } else {
-                selector = selectorTokenizer.stringify({
-                    type: "selectors",
-                    nodes: [sel]
-                })
-            }
+            let selector = selectorTokenizer.stringify({
+                type: "selectors",
+                nodes: [{
+                    type: "selector",
+                    nodes: [{ type: "class", name: prop.mangledName }].concat(sel.nodes.slice(1) as any)
+                }]
+            })
 
             if (/::?-+(moz|ms|webkit)-\b/ig.test(selector)) {
                 yield { selectors: [selector], property: prop }

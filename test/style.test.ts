@@ -57,10 +57,10 @@ describe("Test newStyle funcionality", () => {
 
         let style = newStyle(registry, loader)
 
-        expect(style("hello")).to.eql("hello")
-        expect(style("loader")).to.eql("a")
+        expect(style("hello")).to.eql("hello a b c")
+        expect(style("loader")).to.eql("d")
 
-        expect(registry.renderCss()[0].content).to.eql(`.hello{width:10px}.hello{height:20px}.hello div{font-size:12px}.a{z-index:20}`)
+        expect(registry.renderCss()[0].content).to.eql(`.a{width:10px}.b{height:20px}.c div{font-size:12px}.d{z-index:20}`)
     })
 
     it("Immutable className 2", () => {
@@ -84,11 +84,11 @@ describe("Test newStyle funcionality", () => {
 
         let style = newStyle(registry, loader)
 
-        expect(style("hello")).to.eql("hello")
-        expect(style("loader almafa")).to.eql("a b c")
-        expect(style("toki")).to.eql("b")
-        expect(style("hello")).to.eql("hello")
+        expect(style("hello")).to.eql("hello a b c")
+        expect(style("loader almafa")).to.eql("d a e")
+        expect(style("toki")).to.eql("a")
+        expect(style("hello")).to.eql("hello a b c")
 
-        expect(registry.renderCss()[0].content).to.eql(`.hello,.b{width:10px}.hello{height:20px}.hello div{font-size:12px}.a{z-index:20}.c test{width:50px}`)
+        expect(registry.renderCss()[0].content).to.eql(`.a{width:10px}.b{height:20px}.c div{font-size:12px}.d{z-index:20}.e test{width:50px}`)
     })
 })
