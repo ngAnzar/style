@@ -127,7 +127,7 @@ export class Registry {
             for (let entry of ruleset.entries) {
                 for (let ruleName in entry.rules) {
                     let ruleValue = entry.rules[ruleName]
-                    let rule = `${ruleName}:${ruleValue}`
+                    let rule = `${ruleName}:${ruleValue}${ruleValue.important ? "!" : ""}`
                     let registered = this.findProperty(rule)
 
                     if (registered) {
