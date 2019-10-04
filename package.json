@@ -14,18 +14,15 @@
   "license": "ISC",
   "dependencies": {
     "clean-css": "^4.2.1",
-    "css": "^2.2.1",
-    "css-selector-tokenizer": "^0.7.0",
-    "is-plain-object": "^2.0.4"
+    "css": "^2.2.4",
+    "css-selector-tokenizer": "^0.7.1",
+    "is-plain-object": "^3.0.0"
   },
   "devDependencies": {
-    "@types/chai": "^4.0.4",
-    "@types/mocha": "^2.2.43",
-    "@types/node": "^8.0.30",
-    "chai": "^4.1.2",
-    "mocha": "^3.5.3",
-    "ts-mocha": "^1.0.3",
-    "ts-node": "^3.3.0",
-    "typescript": "^2.5.2"
+    "@types/chai": "^4.2.3",
+    "mocha": "^6.2.1",
+    "ts-mocha": "^6.0.0",
+    "ts-node": "^8.4.1",
+    "typescript": "^3.6.3"
   }
 }
