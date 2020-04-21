@@ -44,6 +44,7 @@ function defineDependentStyles(style: Style, registries: Registry[], loader: Loa
 
 
 export function newStyle(registry: Registry, loader: Loader): Style {
+    registry.addLoader(loader)
     const style = ((...classNames: string[]): string => {
         let res: string[] = []
 
@@ -67,8 +68,6 @@ export function newStyle(registry: Registry, loader: Loader): Style {
         return res.join(" ")
     }) as Style
 
-    registry.registerUnhandled(loader)
     defineDependentStyles(style, registry.getAllDeps(), loader)
-
     return style
 }

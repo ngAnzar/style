@@ -144,6 +144,7 @@ export abstract class Loader {
 
     protected entries: EntriesByClass = {}
     protected unhandable: EntriesByClass = {}
+    protected parent: Loader
 
     private _emptyGroupId: RuleSetGroupId = {
         kind: "none",
@@ -187,6 +188,10 @@ export abstract class Loader {
 
         if (this.entries[className] != null) {
             res = res.concat(Object.values(this.entries[className]))
+        }
+
+        if (this.parent) {
+            res = res.concat(this.parent.find(className))
         }
 
         return res
@@ -241,6 +246,13 @@ export abstract class Loader {
                 yield this.unhandable[k][j]
             }
         }
+    }
+
+    public newChildLoader(): Loader {
+        const ctor = this.constructor as any
+        const obj = new ctor()
+        obj.parent = this
+        return obj
     }
 
     protected removeWS(str: string): string {

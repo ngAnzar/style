@@ -166,11 +166,13 @@ export declare abstract class Loader {
     protected static ruleCounter: number;
     protected entries: EntriesByClass;
     protected unhandable: EntriesByClass;
+    protected parent: Loader;
     private _emptyGroupId;
     append(group: RuleSetGroupId, selector: Selector, rules: CssRules): void;
     find(className: string): RuleSet[];
     makeGroupId(rule?: StyleSheetRule): RuleSetGroupId;
     getUnhandables(): IterableIterator<RuleSet>;
+    newChildLoader(): Loader;
     protected removeWS(str: string): string;
 }
 export declare class CssLoader extends Loader {

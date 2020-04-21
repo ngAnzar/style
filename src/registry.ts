@@ -69,6 +69,7 @@ export class Registry {
     public readonly depends: Registry[] = []
     protected entries: EntriesByProperty = {}
     private fontFaces: { [key: string]: StyleSheetRule[] } = {}
+    private loaders: Loader[] = []
 
     private uidCounter: number = 0
     private uidOffset: number = 10
@@ -80,6 +81,12 @@ export class Registry {
 
     public constructor(public readonly name: string) {
 
+    }
+
+    public addLoader(loader: Loader) {
+        if (this.loaders.indexOf(loader) === -1) {
+            this.loaders.push(loader)
+        }
     }
 
     public addDependency(dep: Registry): void {
@@ -222,6 +229,10 @@ export class Registry {
     }
 
     public renderCss(options: RenderOptions = {}): RenderedCss[] {
+        for (const loader of this.loaders) {
+            this.registerUnhandled(loader)
+        }
+
         if (options.splitByMedia === true) {
             return this._renderByGroup(options)
         } else {
