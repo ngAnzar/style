@@ -14,15 +14,15 @@
   "license": "ISC",
   "dependencies": {
     "clean-css": "^4.2.3",
-    "css": "^2.2.4",
-    "css-selector-tokenizer": "^0.7.2",
-    "is-plain-object": "^3.0.0"
+    "css": "^3.0.0",
+    "css-selector-tokenizer": "^0.7.3",
+    "is-plain-object": "^4.1.1"
   },
   "devDependencies": {
-    "@types/chai": "^4.2.11",
-    "mocha": "^7.1.1",
+    "@types/chai": "^4.2.12",
+    "mocha": "^8.1.1",
     "ts-mocha": "^7.0.0",
-    "ts-node": "^8.8.2",
-    "typescript": "^3.8.3"
+    "ts-node": "^8.10.2",
+    "typescript": "^3.9.7"
   }
 }
