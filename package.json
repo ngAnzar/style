@@ -13,16 +13,16 @@
   },
   "license": "ISC",
   "dependencies": {
-    "clean-css": "^4.2.3",
+    "clean-css": "^5.0.1",
     "css": "^3.0.0",
     "css-selector-tokenizer": "^0.7.3",
-    "is-plain-object": "^4.1.1"
+    "is-plain-object": "^5.0.0"
   },
   "devDependencies": {
-    "@types/chai": "^4.2.12",
-    "mocha": "^8.1.1",
-    "ts-mocha": "^7.0.0",
-    "ts-node": "^8.10.2",
-    "typescript": "^3.9.7"
+    "@types/chai": "^4.2.14",
+    "mocha": "^8.2.1",
+    "ts-mocha": "^8.0.0",
+    "ts-node": "^9.1.1",
+    "typescript": "^4.1.3"
   }
 }
