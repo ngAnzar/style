@@ -264,7 +264,7 @@ export abstract class Loader {
 export class CssLoader extends Loader {
     public static minifier = new CleanCSS({
         inline: false,
-        level: 1
+        level: 2
     })
 
     public load(content: string): void {
